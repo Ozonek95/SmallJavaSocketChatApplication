@@ -7,8 +7,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import javax.swing.*;
+
 
 public class View implements WritableGUI {
     public TextField ipTextField;
@@ -29,6 +32,13 @@ public class View implements WritableGUI {
         Thread t1 = new Thread(listener);
         t1.start();
     }
+
+    @FXML
+    void typedEnter(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            sendButtonActionPerformed();
+        }
+    }
     @FXML
     private void sendButtonActionPerformed(){
         chat.appendText("[Me] "+message.getText()+System.lineSeparator());
@@ -36,5 +46,11 @@ public class View implements WritableGUI {
                 ,ipTextField.getText(),Integer.parseInt(targetPort.getText()));
         Thread thread = new Thread(transmitter);
         thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        message.setText("");
     }
 }
